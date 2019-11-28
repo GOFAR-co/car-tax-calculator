@@ -1,4 +1,4 @@
-import { getTaxClaimableMileage } from '../index';
+import { getTaxClaimableMileage } from '../src/index';
 
 describe('getTaxClaimableMileage', () => {
   describe('ATO_non_logbook', () => {

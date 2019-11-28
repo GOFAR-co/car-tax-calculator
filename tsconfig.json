@@ -4,7 +4,8 @@
     "outDir": "./dist",
     "allowJs": true,
     "target": "ES2020",
+    "moduleResolution": "node",
     "esModuleInterop": true
   },
-  "include": ["./**/*"]
+  "include": ["./src/**/*"]
 }
