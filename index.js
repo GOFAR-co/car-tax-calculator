@@ -1,10 +1,10 @@
 const KM_TO_MILES_CONVERSION_RATE = 0.621371;
 
 const getClaimableAmountWithTieredRates = (distanceTravelled, rateTiers) => {
-  const { totalAmount } = rateTiers.reduce(
+  return rateTiers.reduce(
     (totalData, rateTier) => {
       const remainingUncalculatedDistance =
-        distanceTravelled - totalData.distanceUsed;
+        distanceTravelled - totalData.claimableDistance;
       const distanceToUseInThisTier = Math.min(
         rateTier.maxDistanceForThisTier,
         remainingUncalculatedDistance
@@ -13,17 +13,15 @@ const getClaimableAmountWithTieredRates = (distanceTravelled, rateTiers) => {
         distanceToUseInThisTier * rateTier.ratePerDistanceUnit;
 
       return {
-        distanceUsed: totalData.distanceUsed + distanceToUseInThisTier,
-        totalAmount: totalData.totalAmount + amountForThisTier
+        claimableDistance: totalData.claimableDistance + distanceToUseInThisTier,
+        claimableAmount: totalData.claimableAmount + amountForThisTier
       };
     },
     {
-      distanceUsed: 0,
-      totalAmount: 0
+      claimableDistance: 0,
+      claimableAmount: 0
     }
   );
-
-  return totalAmount;
 };
 
 const getClaimableAmountATONonLogbook = (kmTravelled) => {
@@ -37,10 +35,12 @@ const getClaimableAmountATONonLogbook = (kmTravelled) => {
     }
   ];
 
-  const amount = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
   return {
-    amount,
-    currency: 'AUD'
+    claimableAmount,
+    claimableDistance,
+    currency: "AUD",
+    distanceUnit: "km"
   };
 }
 
@@ -55,10 +55,12 @@ const getClaimableAmountIRS = (kmTravelled) => {
   ];
 
   const milesTravelled = kmTravelled * KM_TO_MILES_CONVERSION_RATE;
-  const amount = getClaimableAmountWithTieredRates(milesTravelled, RATE_TIERS);
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(milesTravelled, RATE_TIERS);
   return {
-    amount,
-    currency: "USD"
+    claimableAmount,
+    claimableDistance,
+    currency: "USD",
+    distanceUnit: "miles"
   };
 }
 
@@ -76,10 +78,12 @@ const getClaimableAmountUKHMRC = (kmTravelled) => {
     }
   ];
 
-  const amount = getClaimableAmountWithTieredRates(milesTravelled, RATE_TIERS);
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(milesTravelled, RATE_TIERS);
   return {
-    amount,
-    currency: "GBP"
+    claimableAmount,
+    claimableDistance,
+    currency: "GBP",
+    distanceUnit: "miles"
   };
 }
 
@@ -97,10 +101,12 @@ const getClaimableAmountCanadaRevenueAgency = (kmTravelled) => {
     }
   ];
 
-  const amount = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
   return {
-    amount,
-    currency: "CAD"
+    claimableAmount,
+    claimableDistance,
+    currency: "CAD",
+    distanceUnit: "km"
   };
 }
 
@@ -114,10 +120,12 @@ const getClaimableAmountGermany = kmTravelled => {
     }
   ];
 
-  const amount = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(kmTravelled, RATE_TIERS);
   return {
-    amount,
-    currency: "EUR"
+    claimableAmount,
+    claimableDistance,
+    currency: "EUR",
+    distanceUnit: 'km'
   };
 };
 
