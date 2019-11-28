@@ -129,7 +129,21 @@ const getClaimableAmountGermany = kmTravelled => {
   };
 };
 
-const getTaxClaimableMileage = ({ taxType, kmTravelled }) => {
+const getClaimableAmountCustom = (kmTravelled, rateTiers, currency, distanceUnit) => {
+  const {
+    claimableAmount,
+    claimableDistance
+  } = getClaimableAmountWithTieredRates(kmTravelled, rateTiers);
+
+  return {
+    claimableAmount,
+    claimableDistance,
+    currency,
+    distanceUnit
+  };
+};
+
+const getTaxClaimableMileage = ({ taxType, kmTravelled, rateTiers, currency, distanceUnit }) => {
   switch (taxType) {
     case "ATO_non_logbook":
       return getClaimableAmountATONonLogbook(kmTravelled);
@@ -141,6 +155,8 @@ const getTaxClaimableMileage = ({ taxType, kmTravelled }) => {
       return getClaimableAmountCanadaRevenueAgency(kmTravelled);
     case "Germany":
       return getClaimableAmountGermany(kmTravelled);
+    case "custom":
+      return getClaimableAmountCustom(kmTravelled, rateTiers, currency, distanceUnit);
     default:
       return null;
   }

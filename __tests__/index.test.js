@@ -77,6 +77,38 @@ describe("getTaxClaimableMileage", () => {
     });
   });
 
+  describe("custom", () => {
+    test("should work with lambos purchased with BTC", () => {
+      const rateTiers = [
+        {
+          maxDistanceForThisTier: 8000,
+          ratePerDistanceUnit: 0.42
+        },
+        {
+          maxDistanceForThisTier: Infinity,
+          ratePerDistanceUnit: 0.52
+        }
+      ];
+
+      const {
+        claimableAmount,
+        claimableDistance,
+        currency,
+        distanceUnit
+      } = getTaxClaimableMileage({
+        taxType: "custom",
+        kmTravelled: 15122,
+        currency: "BTC",
+        distanceUnit: "earth to moon hops",
+        rateTiers
+      });
+      expect(claimableAmount).toEqual(7063.4400000000005);
+      expect(claimableDistance).toEqual(15122);
+      expect(currency).toEqual('BTC');
+      expect(distanceUnit).toEqual("earth to moon hops");
+    });
+  });
+
   describe("unsupported", () => {
     test("should return null", () => {
       const result = getTaxClaimableMileage({
