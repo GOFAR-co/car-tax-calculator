@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test-ci": "CI=true jest"
   },
   "author": "GOFAR",
   "license": "ISC",
