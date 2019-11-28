@@ -7,6 +7,12 @@ describe("getClaimableAmountInCurrency", () => {
       expect(result.amount).toEqual(68);
       expect(result.currency).toEqual('AUD');
     });
+
+    test('should be capped at 5000km correctly', () => {
+      const result = getClaimableAmountInCurrency("ATO_non_logbook", 10000);
+      expect(result.amount).toBeCloseTo(3400.00, 2);
+      expect(result.currency).toEqual('AUD');
+    });
   });
 
   describe("IRS", () => {
