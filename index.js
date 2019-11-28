@@ -129,7 +129,7 @@ const getClaimableAmountGermany = kmTravelled => {
   };
 };
 
-const getClaimableAmountInCurrency = (taxType, kmTravelled) => {
+const getTaxClaimableMileage = ({ taxType, kmTravelled }) => {
   switch (taxType) {
     case "ATO_non_logbook":
       return getClaimableAmountATONonLogbook(kmTravelled);
@@ -147,7 +147,7 @@ const getClaimableAmountInCurrency = (taxType, kmTravelled) => {
 }
 
 module.exports = {
-  getClaimableAmountInCurrency
+  getTaxClaimableMileage
 };
 
 
