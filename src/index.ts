@@ -1,9 +1,6 @@
-const KM_TO_MILES_CONVERSION_RATE = 0.621371;
+import { IRateTier, ITaxCalculationParams, ITaxCalculationResult } from './types';
 
-interface IRateTier {
-  maxDistanceForThisTier: number;
-  ratePerDistanceUnit: number;
-}
+const KM_TO_MILES_CONVERSION_RATE = 0.621371;
 
 const getClaimableAmountWithTieredRates = (distanceTravelled: number, rateTiers: IRateTier[]) => {
   return rateTiers.reduce(
@@ -140,23 +137,13 @@ const getClaimableAmountCustom = (kmTravelled: number, rateTiers, currency, dist
   };
 };
 
-type TaxType = 'ATO_non_logbook' | 'IRS' | 'UK_HMRC' | 'Canada_Revenue_Agency' | 'Germany' | 'custom';
-
-interface ITaxCalculationParams {
-  taxType: TaxType;
-  kmTravelled: number;
-  rateTiers?: IRateTier[];
-  currency?: string;
-  distanceUnit?: string;
-}
-
 export const getTaxClaimableMileage = ({
   taxType,
   kmTravelled,
   rateTiers,
   currency,
   distanceUnit
-}: ITaxCalculationParams) => {
+}: ITaxCalculationParams): ITaxCalculationResult => {
   switch (taxType) {
     case 'ATO_non_logbook':
       return getClaimableAmountATONonLogbook(kmTravelled);

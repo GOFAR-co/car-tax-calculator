@@ -1,79 +1,86 @@
+import { TaxType } from '../src/types';
 import { getTaxClaimableMileage } from '../src/index';
 
 describe('getTaxClaimableMileage', () => {
-  describe('ATO_non_logbook', () => {
-    test('should calculate correctly for a trip under 5000km', () => {
-      const result = getTaxClaimableMileage({
-        taxType: 'ATO_non_logbook',
-        kmTravelled: 100
-      });
-      expect(result.claimableAmount).toEqual(68);
-      expect(result.claimableDistance).toEqual(100);
-      expect(result.currency).toEqual('AUD');
-      expect(result.distanceUnit).toEqual('km');
-    });
+  const TEST_CASES = [
+    {
+      taxType: 'ATO_non_logbook',
+      kmTravelled: 100,
+      description: 'small trip under 5000km should claim all mileage',
+      expectedResult: {
+        claimableAmount: 68,
+        claimableDistance: 100,
+        currency: 'AUD',
+        distanceUnit: 'km'
+      }
+    },
+    {
+      taxType: 'ATO_non_logbook',
+      kmTravelled: 10000,
+      description: 'big trip over 5000km should be capped at 5000km',
+      expectedResult: {
+        claimableAmount: 3400,
+        claimableDistance: 5000,
+        currency: 'AUD',
+        distanceUnit: 'km'
+      }
+    },
+    {
+      taxType: 'IRS',
+      kmTravelled: 100,
+      description: 'small trip should calculate correctly',
+      expectedResult: {
+        claimableAmount: 36.039518,
+        claimableDistance: 62.137,
+        currency: 'USD',
+        distanceUnit: 'miles'
+      }
+    },
+    {
+      taxType: 'UK_HMRC',
+      kmTravelled: 19312.128,
+      description: 'trip should calculate correctly',
+      expectedResult: {
+        claimableAmount: 5000,
+        claimableDistance: 12000,
+        currency: 'GBP',
+        distanceUnit: 'miles'
+      }
+    },
+    {
+      taxType: 'Canada_Revenue_Agency',
+      kmTravelled: 19312.128,
+      description: 'trip should calculate correctly',
+      expectedResult: {
+        claimableAmount: 10342.30656,
+        claimableDistance: 19312.128,
+        currency: 'CAD',
+        distanceUnit: 'km'
+      }
+    },
+    {
+      taxType: 'Germany',
+      kmTravelled: 19312.128,
+      description: 'trip should calculate correctly',
+      expectedResult: {
+        claimableAmount: 5793.6384,
+        claimableDistance: 19312.128,
+        currency: 'EUR',
+        distanceUnit: 'km'
+      }
+    }
+  ];
 
-    test('should be capped at 5000km correctly', () => {
+  TEST_CASES.forEach((testCase) => {
+    test(`Given that the tax type is ${testCase.taxType} and the distance is ${testCase.kmTravelled}, ${testCase.description}`, () => {
       const result = getTaxClaimableMileage({
-        taxType: 'ATO_non_logbook',
-        kmTravelled: 10000
+        taxType: testCase.taxType as TaxType,
+        kmTravelled: testCase.kmTravelled
       });
-      expect(result.claimableAmount).toBeCloseTo(3400.0, 2);
-      expect(result.claimableDistance).toEqual(5000);
-      expect(result.currency).toEqual('AUD');
-      expect(result.distanceUnit).toEqual('km');
-    });
-  });
-
-  describe('IRS', () => {
-    test('should calculate correctly', () => {
-      const result = getTaxClaimableMileage({
-        taxType: 'IRS',
-        kmTravelled: 100
-      });
-      expect(result.claimableAmount).toEqual(36.039518);
-      expect(result.claimableDistance).toBeCloseTo(62.137, 2);
-      expect(result.currency).toEqual('USD');
-      expect(result.distanceUnit).toEqual('miles');
-    });
-  });
-
-  describe('UK_HMRC', () => {
-    test('should calculate correctly', () => {
-      const result = getTaxClaimableMileage({
-        taxType: 'UK_HMRC',
-        kmTravelled: 19312.128
-      });
-      expect(result.claimableAmount).toBeCloseTo(5000, 2);
-      expect(result.claimableDistance).toBeCloseTo(12000, 2);
-      expect(result.currency).toEqual('GBP');
-      expect(result.distanceUnit).toEqual('miles');
-    });
-  });
-
-  describe('Canada_Revenue_Agency', () => {
-    test('should calculate correctly', () => {
-      const result = getTaxClaimableMileage({
-        taxType: 'Canada_Revenue_Agency',
-        kmTravelled: 19312.128
-      });
-      expect(result.claimableAmount).toBeCloseTo(10342.30656, 2);
-      expect(result.claimableDistance).toBeCloseTo(19312.128, 2);
-      expect(result.currency).toEqual('CAD');
-      expect(result.distanceUnit).toEqual('km');
-    });
-  });
-
-  describe('Germany', () => {
-    test('should calculate correctly', () => {
-      const result = getTaxClaimableMileage({
-        taxType: 'Germany',
-        kmTravelled: 19312.128
-      });
-      expect(result.claimableDistance).toBeCloseTo(19312.128, 2);
-      expect(result.claimableAmount).toBeCloseTo(5793.6384, 2);
-      expect(result.currency).toEqual('EUR');
-      expect(result.distanceUnit).toEqual('km');
+      expect(result.claimableAmount).toBeCloseTo(testCase.expectedResult.claimableAmount, 2);
+      expect(result.claimableDistance).toBeCloseTo(testCase.expectedResult.claimableDistance, 2);
+      expect(result.currency).toEqual(testCase.expectedResult.currency);
+      expect(result.distanceUnit).toEqual(testCase.expectedResult.distanceUnit);
     });
   });
 
