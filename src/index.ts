@@ -1,16 +1,13 @@
+import { IRateTier, ITaxCalculationParams, ITaxCalculationResult } from './types';
+
 const KM_TO_MILES_CONVERSION_RATE = 0.621371;
 
-const getClaimableAmountWithTieredRates = (distanceTravelled, rateTiers) => {
+const getClaimableAmountWithTieredRates = (distanceTravelled: number, rateTiers: IRateTier[]) => {
   return rateTiers.reduce(
     (totalData, rateTier) => {
-      const remainingUncalculatedDistance =
-        distanceTravelled - totalData.claimableDistance;
-      const distanceToUseInThisTier = Math.min(
-        rateTier.maxDistanceForThisTier,
-        remainingUncalculatedDistance
-      );
-      const amountForThisTier =
-        distanceToUseInThisTier * rateTier.ratePerDistanceUnit;
+      const remainingUncalculatedDistance = distanceTravelled - totalData.claimableDistance;
+      const distanceToUseInThisTier = Math.min(rateTier.maxDistanceForThisTier, remainingUncalculatedDistance);
+      const amountForThisTier = distanceToUseInThisTier * rateTier.ratePerDistanceUnit;
 
       return {
         claimableDistance: totalData.claimableDistance + distanceToUseInThisTier,
@@ -24,7 +21,7 @@ const getClaimableAmountWithTieredRates = (distanceTravelled, rateTiers) => {
   );
 };
 
-const getClaimableAmountATONonLogbook = (kmTravelled) => {
+const getClaimableAmountATONonLogbook = (kmTravelled: number) => {
   // NB if you don't provide a logbook, the ATO limits you to claiming 5000km per year
   // See https://www.ato.gov.au/individuals/income-and-deductions/deductions-you-can-claim/vehicle-and-travel-expenses/car-expenses/
 
@@ -39,12 +36,12 @@ const getClaimableAmountATONonLogbook = (kmTravelled) => {
   return {
     claimableAmount,
     claimableDistance,
-    currency: "AUD",
-    distanceUnit: "km"
+    currency: 'AUD',
+    distanceUnit: 'km'
   };
-}
+};
 
-const getClaimableAmountIRS = (kmTravelled) => {
+const getClaimableAmountIRS = (kmTravelled: number) => {
   // Source: https://www.irs.gov/tax-professionals/standard-mileage-rates
 
   const RATE_TIERS = [
@@ -59,12 +56,12 @@ const getClaimableAmountIRS = (kmTravelled) => {
   return {
     claimableAmount,
     claimableDistance,
-    currency: "USD",
-    distanceUnit: "miles"
+    currency: 'USD',
+    distanceUnit: 'miles'
   };
-}
+};
 
-const getClaimableAmountUKHMRC = (kmTravelled) => {
+const getClaimableAmountUKHMRC = (kmTravelled: number) => {
   const milesTravelled = kmTravelled * KM_TO_MILES_CONVERSION_RATE;
   // https://www.gov.uk/expenses-and-benefits-business-travel-mileage/rules-for-tax
   const RATE_TIERS = [
@@ -82,12 +79,12 @@ const getClaimableAmountUKHMRC = (kmTravelled) => {
   return {
     claimableAmount,
     claimableDistance,
-    currency: "GBP",
-    distanceUnit: "miles"
+    currency: 'GBP',
+    distanceUnit: 'miles'
   };
-}
+};
 
-const getClaimableAmountCanadaRevenueAgency = (kmTravelled) => {
+const getClaimableAmountCanadaRevenueAgency = (kmTravelled: number) => {
   // https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/benefits-allowances/automobile/automobile-motor-vehicle-allowances/automobile-allowance-rates.html
 
   const RATE_TIERS = [
@@ -105,12 +102,12 @@ const getClaimableAmountCanadaRevenueAgency = (kmTravelled) => {
   return {
     claimableAmount,
     claimableDistance,
-    currency: "CAD",
-    distanceUnit: "km"
+    currency: 'CAD',
+    distanceUnit: 'km'
   };
-}
+};
 
-const getClaimableAmountGermany = kmTravelled => {
+const getClaimableAmountGermany = (kmTravelled) => {
   // https://www.eurodev.com/wp-content/uploads/2019/05/hea-5c-20surgic_38993149.pdf
 
   const RATE_TIERS = [
@@ -124,31 +121,43 @@ const getClaimableAmountGermany = kmTravelled => {
   return {
     claimableAmount,
     claimableDistance,
-    currency: "EUR",
+    currency: 'EUR',
     distanceUnit: 'km'
   };
 };
 
-const getClaimableAmountInCurrency = (taxType, kmTravelled) => {
+const getClaimableAmountCustom = (kmTravelled: number, rateTiers, currency, distanceUnit) => {
+  const { claimableAmount, claimableDistance } = getClaimableAmountWithTieredRates(kmTravelled, rateTiers);
+
+  return {
+    claimableAmount,
+    claimableDistance,
+    currency,
+    distanceUnit
+  };
+};
+
+export const getTaxClaimableMileage = ({
+  taxType,
+  kmTravelled,
+  rateTiers,
+  currency,
+  distanceUnit
+}: ITaxCalculationParams): ITaxCalculationResult => {
   switch (taxType) {
-    case "ATO_non_logbook":
+    case 'ATO_non_logbook':
       return getClaimableAmountATONonLogbook(kmTravelled);
-    case "IRS":
-      return getClaimableAmountIRS(kmTravelled)
-    case "UK_HMRC":
+    case 'IRS':
+      return getClaimableAmountIRS(kmTravelled);
+    case 'UK_HMRC':
       return getClaimableAmountUKHMRC(kmTravelled);
-    case "Canada_Revenue_Agency":
+    case 'Canada_Revenue_Agency':
       return getClaimableAmountCanadaRevenueAgency(kmTravelled);
-    case "Germany":
+    case 'Germany':
       return getClaimableAmountGermany(kmTravelled);
+    case 'custom':
+      return getClaimableAmountCustom(kmTravelled, rateTiers, currency, distanceUnit);
     default:
       return null;
   }
-}
-
-module.exports = {
-  getClaimableAmountInCurrency
 };
-
-
-

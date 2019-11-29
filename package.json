@@ -1,15 +1,39 @@
 {
   "name": "car-tax-calculations",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Little util to calculate claimable cost of car mileage for different jurisdictions.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "jest",
-    "test-ci": "CI=true jest"
+    "test-ci": "CI=true jest",
+    "prepublish": "tsc"
   },
   "author": "GOFAR",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^24.9.0"
+    "@types/jest": "^24.0.23",
+    "@typescript-eslint/eslint-plugin": "^2.9.0",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.0.5",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^3.1.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "prettier-eslint": "^9.0.1",
+    "pretty-quick": "^2.0.1",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "make pre-commit"
+    }
   }
 }

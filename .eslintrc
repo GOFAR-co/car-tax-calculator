@@ -1,0 +1,23 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["airbnb", "prettier"],
+  "plugins": ["prettier", "jest", "@typescript-eslint"],
+  "rules": {
+    "prettier/prettier": ["off"],
+    "no-console": ["error", { "allow": ["warn", "error", "debug"] }],
+    "curly": ["error", "all"],
+    "id-length": ["error"],
+    "arrow-parens": ["error"],
+    "import/prefer-default-export": "off",
+    "consistent-return": "off",
+    "no-underscore-dangle": ["error"]
+  },
+  "env": {
+    "jest": true
+  },
+  "settings": {
+    "react": {
+      "version": "999.999.999"
+    }
+  }
+}
