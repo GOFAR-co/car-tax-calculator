@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "test-ci": "CI=true jest",
-    "prepublish": "tsc"
+    "prepare": "tsc"
   },
   "author": "GOFAR",
   "license": "ISC",
