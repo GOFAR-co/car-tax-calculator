@@ -1,6 +1,6 @@
 {
   "name": "car-tax-calculations",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "Little util to calculate claimable cost of car mileage for different jurisdictions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
